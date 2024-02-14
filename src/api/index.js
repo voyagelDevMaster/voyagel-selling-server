@@ -4,7 +4,7 @@ const express = require('express');
 
 // eslint-disable-next-line import/no-unresolved
 const auth = require('./auth');
-const session = require('./session');
+const selling = require('./selling');
 
 const trajet = require('./trajet');
 
@@ -12,6 +12,7 @@ const tickets = require('./tickets');
 const controles = require('./control');
 const rentals = require('./rentals');
 const operator = require('./operator');
+const devices = require('./devices');
 // eslint-disable-next-line import/no-unresolved
 const fees = require('./fees');
 
@@ -23,9 +24,10 @@ router.get('/', (req, res) => {
   });
 });
 
+router.use('/devices', devices);
 router.use('/auth', auth);
-router.use('/session', session);
-router.use('/session/end', session);
+router.use('/selling', selling);
+router.use('/selling/end', selling);
 router.use('/trajet', trajet);
 router.use('/trajet/add', trajet);
 router.use('/tickets', tickets);

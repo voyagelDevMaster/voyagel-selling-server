@@ -45,32 +45,14 @@ router.post('/', async (req, res) => {
           Rental: true,
           driver: true,
           seller: true,
-          Companie: true,
-          device: true,
-          operator: true,
           itinerary: {
             include: {
               coordinates: true,
               rates: true,
             },
           },
-          vehicule: true,
           Tickets: true,
-          tracking: true,
           trajet: true,
-          reseau: {
-            include: {
-              Itinerary: {
-                include: {
-                  rates: true,
-                  coordinates: true,
-                },
-              },
-              Rubrics: true,
-              Subscription: true,
-              Controller: true,
-            },
-          },
         },
       },
     },

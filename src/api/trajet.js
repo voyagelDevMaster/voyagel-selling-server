@@ -11,8 +11,10 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   const {
-    id,
     number,
+    trajetId,
+    offlineSellingId,
+    itineraryId,
     duration,
     departureTime,
     arrivalTime,
@@ -20,12 +22,19 @@ router.post('/', async (req, res) => {
     rising,
     destination,
     revenue,
+    operatorId,
+    companieId,
+    reseauId,
+    isActivated,
+    isOnline,
   } = req.body;
 
   const result = await prisma.Trajet.create({
     data: {
-      id,
       number,
+      trajetId,
+      offlineSellingId,
+      itineraryId,
       duration,
       departureTime,
       arrivalTime,
@@ -33,6 +42,11 @@ router.post('/', async (req, res) => {
       rising,
       destination,
       revenue,
+      operatorId,
+      companieId,
+      reseauId,
+      isActivated,
+      isOnline,
     },
   });
 
@@ -59,7 +73,9 @@ router.post('/add', async (req, res) => {
       revenue: oldData.revenue,
     },
     create: {
-      id: oldData.id,
+      trajetId: oldData.trajetId,
+      offlineSellingId: oldData.offlineSellingId,
+      itineraryId: oldData.itineraryId,
       number: oldData.number,
       duration: oldData.duration,
       departureTime: oldData.departureTime,
@@ -72,7 +88,9 @@ router.post('/add', async (req, res) => {
   });
   const save = await prisma.Trajet.create({
     data: {
-      id: newData.id,
+      trajetId: newData.trajetId,
+      offlineSellingId: newData.offlineSellingId,
+      itineraryId: newData.itineraryId,
       number: newData.number,
       duration: newData.duration,
       departureTime: newData.departureTime,
@@ -87,7 +105,7 @@ router.post('/add', async (req, res) => {
   if (save) {
     await prisma.selling.update({
       where: {
-        id: newData.sellingId,
+        offlineId: newData.offlineSellingId,
       },
       data: {
         revenue: this.revenue,
@@ -95,7 +113,7 @@ router.post('/add', async (req, res) => {
     });
     result = await prisma.Trajet.findMany({
       where: {
-        sellingId: newData.sellingId,
+        offlineSellingId: newData.offlineSellingId,
       },
       include: {
         Tickets: true,

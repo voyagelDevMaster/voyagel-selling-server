@@ -9,75 +9,57 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   const {
+    offlineId,
     sellerId,
     driverId,
     itineraryId,
     deviceId,
+    startTime,
+    sellingDate,
     vehiculeId,
-    CompanieId,
+    companieId,
     operatorId,
     reseauId,
   } = req.body;
-  const d = new Date();
-  const date = new Intl.DateTimeFormat('fr').format(d);
-  const time = d.toLocaleTimeString('fr-FR');
   // eslint-disable-next-line no-console
-  console.log('date: ', date, 'time ', time);
-  await prisma.selling.updateMany({
+  console.log('🚀 ~ router.post ~ req.body:', req.body);
+  const oldservices = await prisma.selling.findMany({
     where: {
       deviceId,
-    },
-    data: {
-      isActiveted: false,
+      isActiveted: true,
     },
   });
+  // eslint-disable-next-line no-console
+  console.log('🚀 ~ router.post ~ oldservices:', oldservices);
+  if (oldservices.length > 0) {
+    await prisma.selling.updateMany({
+      where: {
+        deviceId,
+      },
+      data: {
+        isActiveted: false,
+      },
+    });
+  }
   const type = 'Vente';
   const result = await prisma.Selling.create({
     data: {
       type,
+      offlineId,
       sellerId,
       driverId,
       itineraryId,
       deviceId,
-      startTime: time,
-      sellingDate: date,
+      startTime,
+      sellingDate,
       vehiculeId,
-      CompanieId,
+      companieId,
       operatorId,
       reseauId,
     },
     include: {
-      Controls: true,
-      Costs: true,
-      Rental: true,
-      Driver: true,
-      Seller: true,
-      Companie: true,
-      Device: true,
-      Operator: true,
-      Itinerary: {
-        include: {
-          Coordinates: true,
-          Rates: true,
-        },
-      },
-      Vehicule: true,
-      Tickets: true,
-      Tracking: true,
-      Trajet: true,
-      Reseau: {
-        include: {
-          Itinerary: {
-            include: {
-              Rates: true,
-              Coordinates: true,
-            },
-          },
-          Rubrics: true,
-          Subscription: true,
-          Controller: true,
-        },
-      },
+      driver: true,
+      seller: true,
     },
   });
   res.json(result);

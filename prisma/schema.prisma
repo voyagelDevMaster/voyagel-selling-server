@@ -315,6 +315,7 @@ model Itinerary {
   isActiveted Boolean      @default(true)
   reseauId    Int
   Controls    Control[]
+  trajets     Trajet[]
   coordinates Coordinate[]
   reseau      Reseau       @relation(fields: [reseauId], references: [id], onDelete: Cascade)
   rates       Rate[]
@@ -434,6 +435,7 @@ model Driver {
 }
 model Selling {
   id   Int    @id @default(autoincrement())
+  offlineId   String?
   type        String?  
   sellingDate String
   startTime   String?
@@ -473,6 +475,7 @@ model Selling {
 
 model Control {
   id   Int    @id @default(autoincrement())  
+  offlinegId      String? 
   controllerName String?
   checkedTickets Int        @default(0)
   ticketFraude   Int        @default(0)
@@ -482,6 +485,7 @@ model Control {
   controllerId   Int
   trajetId       Int
   itineraryId    Int
+  offlineSellingId      String?
   sellingId      Int
   operatorId     Int
   CompanieId     Int
@@ -502,11 +506,13 @@ model Control {
 model Regulation {
   id   Int    @id @default(autoincrement())  
   vehicules   Int       @default(0)
+  offlinegId      String?
   startTime   DateTime?
   endTime     DateTime?
   regulatorId Int
   itineraryId Int
   sellingId   Int?
+  offlineSellingId   String?
   CompanieId  Int
   reseauId    Int
   createdAt   DateTime  @default(now())
@@ -519,6 +525,7 @@ model Regulation {
 
 model Tracking {
   id   Int    @id @default(autoincrement()) 
+  offlinegId      String?
   sellingId Int
   timestamp String
   latitude  Float
@@ -533,6 +540,7 @@ model Trajet {
   id   Int    @id @default(autoincrement()) 
   number  Int @default(0) 
   trajetId  String?
+  offlineSellingId      String?
   duration      String?
   departureTime String
   arrivalTime   String?
@@ -546,6 +554,8 @@ model Trajet {
   Controls      Control[]
   Tickets       Ticket[]
   selling       Selling   @relation(fields: [sellingId], references: [id])
+  itineraryId  Int?
+  itinerary   Itinerary ? @relation(fields: [itineraryId], references: [id])
   companieId  Int?
   companie Companie ? @relation(fields: [companieId], references: [id])
   operatorId  Int
@@ -556,7 +566,8 @@ model Trajet {
 
 model Ticket {
   id   Int    @id @default(autoincrement())  
-  code             String ?       
+  offlinegId      String?
+  code             String?       
   price            Float
   name             String
   validUntil       String?
@@ -571,6 +582,8 @@ model Ticket {
   paymentMethodeId Int?
   companieId  Int?
   sellingId        Int
+  offlineSellingId      String?
+  offlineTrajetId      String?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   isOnline Boolean  @default(false)
@@ -588,6 +601,7 @@ model Ticket {
 
 model Rental {
   id   Int    @id @default(autoincrement())  
+  offlinegId      String?
   Companie      String
   CompaniePhone String?
   price         Float
@@ -596,6 +610,7 @@ model Rental {
   endTime       String
   isActivated   Boolean  @default(true)
   sellingId     Int
+  offlineSellingId      String?
   companieId  Int?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -608,9 +623,11 @@ model Rental {
 model Costs {
   id   Int    @id @default(autoincrement()) 
   rubricsId  Int
+  offlinegId      String?
   name String?
   price    Float
   sellingId Int
+  offlineSellingId      String?
   companieId  Int?
   rubric Rubrics  @relation(fields: [rubricsId], references: [id])
   createdAt DateTime @default(now())
